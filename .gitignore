@@ -1,0 +1,11 @@
+*.png
+*.dot
+*.css
+*.html
+*.js
+*.sty
+*.tex
+*.tmp
+*.md5
+html/
+latex/
