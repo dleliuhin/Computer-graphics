@@ -1,0 +1,5 @@
+EXE = source
+LDFLAGS = -lGL -lGLU -lglut
+
+$(EXE) : source.c
+	gcc -o $@ $< $(CFLAGS) $(LDFLAGS)
