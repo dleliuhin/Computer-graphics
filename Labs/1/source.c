@@ -25,158 +25,172 @@
 //#include <GL/freeglut.h> 
 //#include <GL/gl.h>
 #include <GL/glut.h> 
+#include <math.h>
 
-
-int moving = 0;
-int dx = 50;
-int dy = 30;
+float dx = 5;
+float dy = -3;
+int task = 0;
 
 void resize(int width, int height)
 {
-    const float ar = (float) width / (float) height; 
+    const float ar = (float)width / (float)height;
 
     glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glFrustum(-ar, ar, -1.0, 1.0, 2.0, 100.0); 
-    
-    gluLookAt(0.0, 3.0, -2.5, // Положение глаз, взгляд "из"
-              0.0, 0.2, -6.0, // Цель, взгляд "на"
-              0.0, 1.0, 0.0); // Пока игнорируем
+    glFrustum(-ar, ar, -1.0, 1.0, 2.0, 100.0);
 
-	glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity() ;
-} 
+
+    gluLookAt(0.0, 5.0, 5.0, 
+              0.0, 0.0, 0.0, 
+              0.0, 1.0, 0.0); 
+
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+}
+
 
 void display(void)
-{ 
+{
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    switch (moving)
-    {
-        case 1:
-        {
-            glPushMatrix();
-            glTranslated(0.0 - dx, 1.2, -6.0);
-            glutWireTeapot(0.6);
-            glPopMatrix(); 
 
-            glPushMatrix();
-            glTranslated(0.0, -1.2, -6.0);
-            glutWireSphere(0.7, 16, 16);
-            glPopMatrix(); 
+
+    switch (task) {
+        
+    case 1: {
+
+        glPushMatrix();
+        glTranslated(0.0, 0.0, 0.0);
+        glutWireTeapot(1.0);
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(-5.0, 0.0, 0.0);
+        glutWireSphere(1.0, 16, 16);
+        glPopMatrix();
+
+
+        break;
+    }
             
-            break;
-        }
+    case 2: {
+        glPushMatrix();
+        glTranslated( dx, 0.0, 0.0);
+        glutWireTeapot(1.0);
+        glPopMatrix();
 
-        case 2:
-        {
-            glPushMatrix();
-            glTranslated(0.0, 1.2, -6.0);
-            glutWireTeapot(0.6);
-            glPopMatrix(); 
-
-            glPushMatrix();
-            glTranslated(0.0, -1.2 + dy, -6.0);
-            glutWireSphere(0.7, 16, 16);
-            glPopMatrix(); 
+        glPushMatrix();
+        glTranslated(-5.0, dy, 0.0);
+        glutWireSphere(1.0, 16, 16);
+        glPopMatrix();
+        
+        break;
+    }
             
-            break;
-        }     
+    case 3: {
 
-        case 3:
-        {
-            glPushMatrix();
-            glTranslated(0.0 + dx, 1.2, -6.0);
-            glutWireTeapot(0.6);
-            glPopMatrix(); 
+        glPushMatrix();
+        glTranslated(-5, 0.0, 0.0);
+        //glRotated(10, 1, 0, 0);
+        glScalef(2, 2, 2);
+        glutWireTetrahedron();
+        glPopMatrix();
 
-            glPushMatrix();
-            glTranslated(0.0, -1.2, -6.0);
-            glutWireSphere(0.7, 16, 16);
-            glPopMatrix(); 
+        glPushMatrix();
+        
+        glutWireCone(1.5,1.5,50,50);
+        glPopMatrix();
+
+
+        break;
+
+    }
             
-            break;
-        }   
+    case 4: {
 
-        case 4:
-        {
-            glPushMatrix();
-            glTranslated(0.0, 1.2, -6.0);
-            glutWireTeapot(0.6);
-            glPopMatrix(); 
+        glPushMatrix();
+        //glTranslated(-5, 0.0, 0.0);
+        //glRotated(10, 1, 0, 0);
+        glScalef(2, 2, 2);
+        glutWireTetrahedron();
+        glPopMatrix();
 
-            glPushMatrix();
-            glTranslated(0.0, -1.2 - dy, -6.0);
-            glutWireSphere(0.7, 16, 16);
-            glPopMatrix(); 
-            
-            break;
-        }        
+        glPushMatrix();
+
+        glutWireCone(1.5, 1.5, 50, 50);
+        glPopMatrix();
+    }
 
     }
 
     glutSwapBuffers();
-} 
+}
 
-void normalKeyboard(unsigned char key, int x, int y);
+void processSpecialKeys(int key, int x, int y) {
 
-void specialKeyboard(int key, int x, int y);
+    task = 0;
 
-/* Program entry point */ 
+    switch (key) {
+
+    case GLUT_KEY_RIGHT:
+
+        task = 1;
+
+        break;
+
+    case GLUT_KEY_LEFT:
+
+        task = 2;
+
+        break;
+
+    case GLUT_KEY_UP:
+
+        task = 3;
+
+        break;
+
+    case GLUT_KEY_DOWN:
+
+        task = 4;
+
+        break;
+
+    }
+    glutPostRedisplay();
+
+
+}
+
+void processNormalKeys(unsigned char key, int x, int y)
+{
+
+    if (key == 27)
+
+        exit(0);
+
+}
 
 int main(int argc, char *argv[])
 {
     glutInit(&argc, argv);
-    glutInitWindowSize(1080,840);
-    glutInitWindowPosition(10,10);
-    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH); 
+    glutInitWindowSize(1200, 500);
+    glutInitWindowPosition(100, 100);
+    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 
-    glutCreateWindow("Lab1"); 
+    glutCreateWindow("Lab1");
 
-    glutDisplayFunc(display); 
+    glutDisplayFunc(display);
     glutReshapeFunc(resize);
 
-    glutKeyboardFunc(normalKeyboard);
-    glutSpecialFunc(specialKeyboard);
-
+    glutKeyboardFunc(processNormalKeys);
+    glutSpecialFunc(processSpecialKeys);
     glutPostRedisplay();
 
-    glutMainLoop(); 
+    glutMainLoop();
 
     return EXIT_SUCCESS;
-}
-
-void normalKeyboard(unsigned char key, int x, int y)
-{
-	const char ESCAPE = '\033';
-
-	if (key == ESCAPE)
-	{
-		exit(0);
-	}
-}
-
-void specialKeyboard(int key, int x, int y)
-{
-    moving = 0;
-
-    switch(moving)
-    {
-        case GLUT_KEY_LEFT:
-             moving = 1;
-             break;
-        case GLUT_KEY_UP:
-             moving = 2;
-             break;
-        case GLUT_KEY_RIGHT:
-             moving = 3;
-             break;
-        case GLUT_KEY_DOWN:            
-             moving = 4;
-             break;
-    }
-
-    glutPostRedisplay();
 }
