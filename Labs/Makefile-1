@@ -1,0 +1,5 @@
+EXE = lab1
+LDFLAGS = -lGL -lGLU -lglut
+
+$(EXE) : lab1.cpp
+	g++ -o $@ $< $(CFLAGS) $(LDFLAGS)
